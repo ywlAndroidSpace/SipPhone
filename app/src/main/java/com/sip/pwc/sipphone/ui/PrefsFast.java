@@ -30,6 +30,8 @@ import android.widget.RadioButton;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.sip.pwc.sipphone.R;
+import com.sip.pwc.sipphone.api.SipConfigManager;
+import com.sip.pwc.sipphone.utils.PreferencesWrapper;
 
 public class PrefsFast extends SherlockActivity implements OnClickListener {
 	
