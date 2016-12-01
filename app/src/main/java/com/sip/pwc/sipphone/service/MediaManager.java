@@ -37,6 +37,14 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.os.SystemClock;
 
+import com.csipsimple.api.MediaState;
+import com.csipsimple.api.SipConfigManager;
+import com.csipsimple.api.SipManager;
+import com.sip.pwc.sipphone.utils.Compatibility;
+import com.sip.pwc.sipphone.utils.Log;
+import com.sip.pwc.sipphone.utils.Ringer;
+import com.sip.pwc.sipphone.utils.accessibility.AccessibilityWrapper;
+import com.sip.pwc.sipphone.utils.audio.AudioFocusWrapper;
 import com.sip.pwc.sipphone.utils.bluetooth.BluetoothWrapper;
 import com.sip.pwc.sipphone.utils.bluetooth.BluetoothWrapper.BluetoothChangeListener;
 
@@ -493,7 +501,7 @@ public class MediaManager implements BluetoothChangeListener {
 	}
 
 
-	public void toggleMute() throws SameThreadException {
+	public void toggleMute() throws SipService.SameThreadException {
 		setMicrophoneMute(!userWantMicrophoneMute);
 	}
 	
@@ -505,7 +513,7 @@ public class MediaManager implements BluetoothChangeListener {
 		}
 	}
 	
-	public void setSpeakerphoneOn(boolean on) throws SameThreadException {
+	public void setSpeakerphoneOn(boolean on) throws SipService.SameThreadException {
 		if(service != null && restartAudioWhenRoutingChange && !ringer.isRinging()) {
 			service.setNoSnd();
 			userWantSpeaker = on;
@@ -517,7 +525,7 @@ public class MediaManager implements BluetoothChangeListener {
 		broadcastMediaChanged();
 	}
 	
-	public void setBluetoothOn(boolean on) throws SameThreadException {
+	public void setBluetoothOn(boolean on) throws SipService.SameThreadException {
 		Log.d(THIS_FILE, "Set BT "+on);
 		if(service != null && restartAudioWhenRoutingChange && !ringer.isRinging()) {
 		    service.setNoSnd();
@@ -571,10 +579,10 @@ public class MediaManager implements BluetoothChangeListener {
 			final float speakVolume = service.getPrefs().getPreferenceFloatValue(speaker_key);
 			final float micVolume = userWantMicrophoneMute? 0 : service.getPrefs().getPreferenceFloatValue(mic_key);
 			
-			service.getExecutor().execute(new SipRunnable() {
+			service.getExecutor().execute(new SipService.SipRunnable() {
 				
 				@Override
-				protected void doRun() throws SameThreadException {
+				protected void doRun() throws SipService.SameThreadException {
 					service.confAdjustTxLevel(speakVolume);
 					service.confAdjustRxLevel(micVolume);
 					

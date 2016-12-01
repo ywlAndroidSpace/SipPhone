@@ -3,4 +3,8 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="account_inactive">#FF646464</color>
+    <color name="account_unregistered">#FFFFC200</color>
+    <color name="account_valid">#FF84E300</color>
+    <color name="account_error">#FFFF0F00</color>
 </resources>

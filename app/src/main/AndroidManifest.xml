@@ -100,11 +100,45 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/DialtactsDialpadButtonStyle">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".ui.SipHome"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:theme="@style/DarkTheme"
+            android:uiOptions="splitActionBarWhenNarrow" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
+            </intent-filter>
+            <intent-filter android:priority="10" >
+                <action android:name="com.csipsimple.phone.action.DIALER" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter android:priority="10" >
+                <action android:name="android.intent.action.DIAL" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:scheme="sip" />
+                <data android:scheme="csip" />
+            </intent-filter>
+            <intent-filter android:priority="10" >
+                <action android:name="com.csipsimple.phone.action.CALLLOG" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter android:priority="10" >
+                <action android:name="com.csipsimple.phone.action.FAVORITES" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter android:priority="10" >
+                <action android:name="com.csipsimple.phone.action.MESSAGES" />
+
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
@@ -144,6 +178,79 @@
             android:label="@string/test_audio"
             android:screenOrientation="portrait"
             android:theme="@style/DarkTheme.Dialog" />
+
+        <activity
+            android:name=".ui.outgoingcall.OutgoingCallChooser"
+            android:allowTaskReparenting="false"
+            android:configChanges="orientation"
+            android:excludeFromRecents="true"
+            android:label="@string/call"
+            android:launchMode="singleTask"
+            android:permission="android.permission.USE_SIP"
+            android:process=":sipStack"
+            android:taskAffinity=""
+            android:theme="@style/DarkTheme.Dialog" >
+            <intent-filter>
+                <action android:name="android.intent.action.CALL" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="csip" />
+                <data android:scheme="sip" />
+                <data android:scheme="sips" />
+            </intent-filter>
+            <intent-filter android:priority="10" >
+                <action android:name="android.phone.extra.NEW_CALL_INTENT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="csip" />
+                <data android:scheme="sip" />
+                <data android:scheme="sips" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.incall.InCallActivity"
+            android:allowTaskReparenting="true"
+            android:configChanges="orientation"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:permission="android.permission.CONFIGURE_SIP"
+            android:process=":sipStack"
+            android:taskAffinity=""
+            android:theme="@style/DarkTheme.NoTitle" >
+            <intent-filter android:priority="10" >
+                <action android:name="com.csipsimple.phone.action.INCALL" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.incall.InCallMediaControl"
+            android:configChanges="orientation"
+            android:label="@string/prefs_media"
+            android:taskAffinity="com.sip.pwc.sipphone.ui.incall.InCallActivity"
+            android:theme="@style/DarkTheme.Dialog" />
+        <activity
+            android:name=".ui.PickupSipUri"
+            android:configChanges="orientation"
+            android:label="@string/pickup_sip_uri"
+            android:theme="@style/DarkTheme" />
+        <activity
+            android:name=".ui.calllog.CallLogDetailsActivity"
+            android:theme="@style/DarkTheme" />
+        <!--<activity
+            android:name=".ui.messages.MessageActivity"
+            android:configChanges="orientation"
+            android:launchMode="singleTop"
+            android:theme="@style/DarkTheme"
+            android:windowSoftInputMode="stateHidden" />-->
+        <activity
+            android:name=".ui.account.AccountsEditList"
+            android:label="@string/accounts"
+            android:theme="@style/DarkTheme" />
+        <activity
+            android:name=".wizards.WizardChooser"
+            android:configChanges="orientation"
+            android:label="@string/choose_wizard"
+            android:theme="@style/DarkTheme.Dialog" />
+
         <service
             android:name=".service.SipService"
             android:exported="true"
@@ -154,6 +261,44 @@
                 <action android:name="com.csipsimple.service.SipConfiguration" />
             </intent-filter>
         </service>
+        <service android:name=".service.Downloader" />
+
+        <receiver
+            android:name=".service.OutgoingCall"
+            android:permission="android.permission.CALL_PHONE"
+            android:process=":sipStack" >
+
+            <!-- Here filter for protected-broadcasts -->
+            <intent-filter android:priority="0" >
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".service.HeadsetButtonReceiver" />
+        <receiver
+            android:name=".service.DeviceStateReceiver"
+            android:process=":sipStack" >
+            <!-- Here filter for protected-broadcasts -->
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+
+        <provider
+            android:name=".service.PreferenceProvider"
+            android:authorities="com.csipsimple.prefs"
+            android:permission="android.permission.CONFIGURE_SIP" />
+        <provider
+            android:name=".db.DBProvider"
+            android:authorities="com.csipsimple.db"
+            android:permission="android.permission.CONFIGURE_SIP"
+            android:process=":sipStack" />
     </application>
 
 </manifest>

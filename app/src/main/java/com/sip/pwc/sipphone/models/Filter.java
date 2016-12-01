@@ -32,7 +32,7 @@ import android.util.SparseIntArray;
 
 
 import com.sip.pwc.sipphone.R;
-import com.sip.pwc.sipphone.api.SipManager;
+import com.csipsimple.api.SipManager;
 import com.sip.pwc.sipphone.utils.bluetooth.BluetoothWrapper;
 
 import java.util.ArrayList;

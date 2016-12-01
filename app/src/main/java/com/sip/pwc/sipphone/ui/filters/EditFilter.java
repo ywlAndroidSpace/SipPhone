@@ -39,8 +39,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.sip.pwc.sipphone.R;
-import com.sip.pwc.sipphone.api.SipManager;
-import com.sip.pwc.sipphone.api.SipProfile;
+import com.csipsimple.api.SipManager;
+import com.csipsimple.api.SipProfile;
 import com.sip.pwc.sipphone.models.Filter;
 
 

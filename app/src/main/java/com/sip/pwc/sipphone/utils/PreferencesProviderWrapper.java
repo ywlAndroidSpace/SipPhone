@@ -36,7 +36,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 
-import com.sip.pwc.sipphone.api.SipConfigManager;
+import com.csipsimple.api.SipConfigManager;
 import com.sip.pwc.sipphone.service.MediaManager;
 
 import java.io.BufferedReader;

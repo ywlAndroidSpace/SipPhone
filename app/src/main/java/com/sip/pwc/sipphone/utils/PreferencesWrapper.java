@@ -33,7 +33,7 @@ import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
 
-import com.sip.pwc.sipphone.api.SipConfigManager;
+import com.csipsimple.api.SipConfigManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;

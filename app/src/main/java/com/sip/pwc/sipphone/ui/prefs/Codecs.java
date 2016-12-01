@@ -36,7 +36,7 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.sip.pwc.sipphone.R;
-import com.sip.pwc.sipphone.api.SipConfigManager;
+import com.csipsimple.api.SipConfigManager;
 
 import java.util.ArrayList;
 import java.util.List;

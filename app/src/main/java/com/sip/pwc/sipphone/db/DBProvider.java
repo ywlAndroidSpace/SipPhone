@@ -37,10 +37,10 @@ import android.support.v4.database.DatabaseUtilsCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.sip.pwc.sipphone.api.SipManager;
-import com.sip.pwc.sipphone.api.SipMessage;
-import com.sip.pwc.sipphone.api.SipProfile;
-import com.sip.pwc.sipphone.api.SipProfileState;
+import com.csipsimple.api.SipManager;
+import com.csipsimple.api.SipMessage;
+import com.csipsimple.api.SipProfile;
+import com.csipsimple.api.SipProfileState;
 import com.sip.pwc.sipphone.db.DBAdapter.DatabaseHelper;
 import com.sip.pwc.sipphone.models.Filter;
 import com.sip.pwc.sipphone.utils.backup.BackupWrapper;

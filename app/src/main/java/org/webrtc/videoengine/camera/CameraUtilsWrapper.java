@@ -12,7 +12,8 @@ package org.webrtc.videoengine.camera;
 
 import android.hardware.Camera;
 
-import com.csipsimple.utils.Compatibility;
+
+import com.sip.pwc.sipphone.utils.Compatibility;
 
 import org.webrtc.videoengine.VideoCaptureAndroid;
 import org.webrtc.videoengine.VideoCaptureDeviceInfoAndroid;

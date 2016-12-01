@@ -33,7 +33,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 
-import com.sip.pwc.sipphone.api.SipManager;
+import com.csipsimple.api.SipManager;
 import com.sip.pwc.sipphone.pjsip.NativeLibManager;
 import com.sip.pwc.sipphone.pjsip.PjSipService;
 

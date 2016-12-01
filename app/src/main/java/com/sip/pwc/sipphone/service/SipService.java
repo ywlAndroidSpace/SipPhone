@@ -49,26 +49,32 @@ import android.os.RemoteException;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.SurfaceView;
 import android.widget.Toast;
 
 import com.csipsimple.api.ISipConfiguration;
 import com.csipsimple.api.ISipService;
 import com.sip.pwc.sipphone.R;
-import com.sip.pwc.sipphone.api.SipCallSession;
-import com.sip.pwc.sipphone.api.SipConfigManager;
-import com.sip.pwc.sipphone.api.SipManager;
-import com.sip.pwc.sipphone.api.SipMessage;
-import com.sip.pwc.sipphone.api.SipProfile;
-import com.sip.pwc.sipphone.api.SipProfileState;
-import com.sip.pwc.sipphone.api.SipUri;
+import com.csipsimple.api.MediaState;
+import com.csipsimple.api.SipCallSession;
+import com.csipsimple.api.SipConfigManager;
+import com.csipsimple.api.SipManager;
+import com.csipsimple.api.SipMessage;
+import com.csipsimple.api.SipProfile;
+import com.csipsimple.api.SipProfileState;
+import com.csipsimple.api.SipUri;
 import com.sip.pwc.sipphone.db.DBProvider;
 import com.sip.pwc.sipphone.models.Filter;
+import com.sip.pwc.sipphone.pjsip.PjSipCalls;
 import com.sip.pwc.sipphone.pjsip.PjSipService;
 import com.sip.pwc.sipphone.pjsip.UAStateReceiver;
+import com.sip.pwc.sipphone.service.receiver.DynamicReceiver4;
+import com.sip.pwc.sipphone.service.receiver.DynamicReceiver5;
+import com.sip.pwc.sipphone.ui.incall.InCallMediaControl;
+import com.sip.pwc.sipphone.utils.Compatibility;
 import com.sip.pwc.sipphone.utils.CustomDistribution;
 import com.sip.pwc.sipphone.utils.ExtraPlugins;
+import com.sip.pwc.sipphone.utils.Log;
 import com.sip.pwc.sipphone.utils.PreferencesProviderWrapper;
 
 import java.lang.ref.WeakReference;
@@ -79,6 +85,8 @@ import java.util.Map;
 import java.util.concurrent.Semaphore;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.sip.pwc.sipphone.utils.PreferencesWrapper;
 
 public class SipService extends Service {
 
@@ -690,7 +698,7 @@ public class SipService extends Service {
             getExecutor().execute(new SipRunnable() {
                 @Override
                 protected void doRun() throws SameThreadException {
-                    presence = PresenceStatus.values()[presenceInt];
+                    presence = SipManager.PresenceStatus.values()[presenceInt];
                     pjService.setPresence(presence, statusText, accountId);
                 }
             });

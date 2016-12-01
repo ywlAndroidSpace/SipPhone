@@ -23,7 +23,7 @@ package com.sip.pwc.sipphone.wizards;
 
 import android.content.Intent;
 
-import com.sip.pwc.sipphone.api.SipProfile;
+import com.csipsimple.api.SipProfile;
 import com.sip.pwc.sipphone.models.Filter;
 import com.sip.pwc.sipphone.utils.PreferencesWrapper;
 

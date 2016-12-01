@@ -46,7 +46,7 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.sip.pwc.sipphone.R;
-import com.sip.pwc.sipphone.api.SipConfigManager;
+import com.csipsimple.api.SipConfigManager;
 import com.sip.pwc.sipphone.utils.PreferencesWrapper;
 import com.sip.pwc.sipphone.widgets.DragnDropListView;
 

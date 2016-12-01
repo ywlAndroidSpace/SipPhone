@@ -37,7 +37,7 @@ import android.widget.TextView;
 
 import com.csipsimple.api.ISipService;
 import com.sip.pwc.sipphone.R;
-import com.sip.pwc.sipphone.api.SipManager;
+import com.csipsimple.api.SipManager;
 import com.sip.pwc.sipphone.service.SipService;
 
 

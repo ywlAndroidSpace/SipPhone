@@ -39,9 +39,29 @@ import android.view.KeyEvent;
 import android.view.SurfaceView;
 
 
+import com.sip.pwc.sipphone.R;
+import com.csipsimple.api.SipCallSession;
+import com.csipsimple.api.SipConfigManager;
+import com.csipsimple.api.SipManager;
+import com.csipsimple.api.SipProfile;
+import com.csipsimple.api.SipProfileState;
+import com.csipsimple.api.SipUri;
+import com.sip.pwc.sipphone.pjsip.earlylock.EarlyLockModule;
+import com.sip.pwc.sipphone.pjsip.player.IPlayerHandler;
+import com.sip.pwc.sipphone.pjsip.player.impl.SimpleWavPlayerHandler;
+import com.sip.pwc.sipphone.pjsip.recorder.IRecorderHandler;
+import com.sip.pwc.sipphone.pjsip.recorder.impl.SimpleWavRecorderHandler;
+import com.sip.pwc.sipphone.pjsip.reghandler.RegHandlerModule;
+import com.sip.pwc.sipphone.pjsip.sipclf.SipClfModule;
 import com.sip.pwc.sipphone.service.MediaManager;
 import com.sip.pwc.sipphone.service.SipService;
+import com.sip.pwc.sipphone.utils.ExtraPlugins;
+import com.sip.pwc.sipphone.utils.Log;
 import com.sip.pwc.sipphone.utils.PreferencesProviderWrapper;
+import com.sip.pwc.sipphone.utils.PreferencesWrapper;
+import com.sip.pwc.sipphone.utils.TimerWrapper;
+import com.sip.pwc.sipphone.utils.video.VideoUtilsWrapper;
+import com.sip.pwc.sipphone.wizards.WizardUtils;
 
 import org.pjsip.pjsua.SWIGTYPE_p_pj_stun_auth_cred;
 import org.pjsip.pjsua.csipsimple_config;
@@ -68,6 +88,7 @@ import org.pjsip.pjsua.pjsua_media_config;
 import org.pjsip.pjsua.pjsua_msg_data;
 import org.pjsip.pjsua.pjsua_transport_config;
 
+import com.sip.pwc.sipphone.service.SipService.SameThreadException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -281,12 +302,12 @@ public class PjSipService {
                     cssCfg.setStorage_folder(pjsua.pj_str_copy(""));
                 }
 
-                Map<String, DynCodecInfos> availableCodecs = ExtraPlugins.getDynCodecPlugins(
+                Map<String, ExtraPlugins.DynCodecInfos> availableCodecs = ExtraPlugins.getDynCodecPlugins(
                         service, SipManager.ACTION_GET_EXTRA_CODECS);
                 dynamic_factory[] cssCodecs = cssCfg.getExtra_aud_codecs();
                 int i = 0;
-                for (Entry<String, DynCodecInfos> availableCodec : availableCodecs.entrySet()) {
-                    DynCodecInfos dyn = availableCodec.getValue();
+                for (Map.Entry<String, ExtraPlugins.DynCodecInfos> availableCodec : availableCodecs.entrySet()) {
+                    ExtraPlugins.DynCodecInfos dyn = availableCodec.getValue();
                     if (!TextUtils.isEmpty(dyn.libraryPath)) {
                         cssCodecs[i].setShared_lib_path(pjsua.pj_str_copy(dyn.libraryPath));
                         cssCodecs[i++].setInit_factory_name(pjsua
@@ -312,11 +333,11 @@ public class PjSipService {
                 if (prefsWrapper.getPreferenceBooleanValue(SipConfigManager.USE_VIDEO)) {
                     // TODO :: Have plugins per capture / render / video codec /
                     // converter
-                    Map<String, DynCodecInfos> videoPlugins = ExtraPlugins.getDynCodecPlugins(
+                    Map<String, ExtraPlugins.DynCodecInfos> videoPlugins = ExtraPlugins.getDynCodecPlugins(
                             service, SipManager.ACTION_GET_VIDEO_PLUGIN);
 
                     if (videoPlugins.size() > 0) {
-                        DynCodecInfos videoPlugin = videoPlugins.values().iterator().next();
+                        ExtraPlugins.DynCodecInfos videoPlugin = videoPlugins.values().iterator().next();
                         pj_str_t pjVideoFile = pjsua.pj_str_copy(videoPlugin.libraryPath);
                         Log.d(THIS_FILE, "Load video plugin at " + videoPlugin.libraryPath);
                         // Render
@@ -353,9 +374,9 @@ public class PjSipService {
                         cssCodecs = cssCfg.getExtra_vid_codecs();
                         dynamic_factory[] cssCodecsDestroy = cssCfg.getExtra_vid_codecs_destroy();
                         i = 0;
-                        for (Entry<String, DynCodecInfos> availableCodec : availableCodecs
+                        for (Map.Entry<String, ExtraPlugins.DynCodecInfos> availableCodec : availableCodecs
                                 .entrySet()) {
-                            DynCodecInfos dyn = availableCodec.getValue();
+                            ExtraPlugins.DynCodecInfos dyn = availableCodec.getValue();
                             if (!TextUtils.isEmpty(dyn.libraryPath)) {
                                 // Create
                                 cssCodecs[i].setShared_lib_path(pjsua.pj_str_copy(dyn.libraryPath));
@@ -1089,14 +1110,14 @@ public class PjSipService {
                             String videoSize = SipConfigManager.getPreferenceStringValue(service,
                                     SipConfigManager.VIDEO_CAPTURE_SIZE, "");
                             if (TextUtils.isEmpty(videoSize) || videoSize.equalsIgnoreCase("0x0@0")) {
-                                List<VideoCaptureDeviceInfo> cps = VideoUtilsWrapper.getInstance()
+                                List<VideoUtilsWrapper.VideoCaptureDeviceInfo> cps = VideoUtilsWrapper.getInstance()
                                         .getVideoCaptureDevices(service);
                                 if (cps.size() > 0) {
                                     videoSize = cps.get(cps.size() - 1).bestCapability
                                             .toPreferenceValue();
                                 }
                             }
-                            VideoCaptureCapability videoCap = new VideoUtilsWrapper.VideoCaptureCapability(
+                            VideoUtilsWrapper.VideoCaptureCapability videoCap = new VideoUtilsWrapper.VideoCaptureCapability(
                                     videoSize);
                             if (codec.startsWith("H264")) {
                                 int h264profile = SipConfigManager.getPreferenceIntegerValue(
@@ -1194,7 +1215,7 @@ public class PjSipService {
             return -1;
         }
 
-        final ToCall toCall = sanitizeSipUri(callee, accountId);
+        final SipService.ToCall toCall = sanitizeSipUri(callee, accountId);
         if (toCall != null) {
             pj_str_t uri = pjsua.pj_str_copy(toCall.getCallee());
 
@@ -1382,7 +1403,7 @@ public class PjSipService {
             TimerTask tt = new TimerTask() {
                 @Override
                 public void run() {
-                    service.getExecutor().execute(new SipRunnable() {
+                    service.getExecutor().execute(new SipService.SipRunnable() {
                         @Override
                         protected void doRun() throws SameThreadException {
                             Log.d(THIS_FILE, "Running pending DTMF send");
@@ -1409,13 +1430,13 @@ public class PjSipService {
     /**
      * Send sms/message using SIP server
      */
-    public ToCall sendMessage(String callee, String message, long accountId)
-            throws SameThreadException {
+    public SipService.ToCall sendMessage(String callee, String message, long accountId)
+            throws SipService.SameThreadException {
         if (!created) {
             return null;
         }
 
-        ToCall toCall = sanitizeSipUri(callee, accountId);
+        SipService.ToCall toCall = sanitizeSipUri(callee, accountId);
         if (toCall != null) {
 
             pj_str_t uri = pjsua.pj_str_copy(toCall.getCallee());
@@ -1472,7 +1493,7 @@ public class PjSipService {
         }
     }
 
-    public void sendPendingDtmf(int callId) throws SameThreadException {
+    public void sendPendingDtmf(int callId) throws SipService.SameThreadException {
         if (dtmfToAutoSend.get(callId) != null) {
             Log.d(THIS_FILE, "DTMF - Send pending dtmf " + dtmfToAutoSend.get(callId) + " for "
                     + callId);
@@ -1508,14 +1529,14 @@ public class PjSipService {
         }
     }
 
-    public int callHold(int callId) throws SameThreadException {
+    public int callHold(int callId) throws SipService.SameThreadException {
         if (created) {
             return pjsua.call_set_hold(callId, null);
         }
         return -1;
     }
 
-    public int callReinvite(int callId, boolean unhold) throws SameThreadException {
+    public int callReinvite(int callId, boolean unhold) throws SipService.SameThreadException {
         if (created) {
             return pjsua.call_reinvite(callId,
                     unhold ? pjsua_call_flag.PJSUA_CALL_UNHOLD.swigValue() : 0, null);
@@ -1540,7 +1561,7 @@ public class PjSipService {
         return new SipCallSession(internalCallSession);
     }
 
-    public void setBluetoothOn(boolean on) throws SameThreadException {
+    public void setBluetoothOn(boolean on) throws SipService.SameThreadException {
         if (created && mediaManager != null) {
             mediaManager.setBluetoothOn(on);
         }
@@ -1552,7 +1573,7 @@ public class PjSipService {
      * @param on true if microphone has to be muted
      * @throws SameThreadException
      */
-    public void setMicrophoneMute(boolean on) throws SameThreadException {
+    public void setMicrophoneMute(boolean on) throws SipService.SameThreadException {
         if (created && mediaManager != null) {
             mediaManager.setMicrophoneMute(on);
         }
@@ -1564,7 +1585,7 @@ public class PjSipService {
      * @param on true if the speaker mode has to be on.
      * @throws SameThreadException
      */
-    public void setSpeakerphoneOn(boolean on) throws SameThreadException {
+    public void setSpeakerphoneOn(boolean on) throws SipService.SameThreadException {
         if (created && mediaManager != null) {
             mediaManager.setSpeakerphoneOn(on);
         }
@@ -1578,19 +1599,19 @@ public class PjSipService {
         return new SipCallSession[0];
     }
 
-    public void confAdjustTxLevel(int port, float value) throws SameThreadException {
+    public void confAdjustTxLevel(int port, float value) throws SipService.SameThreadException {
         if (created && userAgentReceiver != null) {
             pjsua.conf_adjust_tx_level(port, value);
         }
     }
 
-    public void confAdjustRxLevel(int port, float value) throws SameThreadException {
+    public void confAdjustRxLevel(int port, float value) throws SipService.SameThreadException {
         if (created && userAgentReceiver != null) {
             pjsua.conf_adjust_rx_level(port, value);
         }
     }
 
-    public void setEchoCancellation(boolean on) throws SameThreadException {
+    public void setEchoCancellation(boolean on) throws SipService.SameThreadException {
         if (created && userAgentReceiver != null) {
             Log.d(THIS_FILE, "set echo cancelation " + on);
             pjsua.set_ec(on ? prefsWrapper.getEchoCancellationTail() : 0,
@@ -1622,7 +1643,7 @@ public class PjSipService {
      * @throws SameThreadException
      */
     public boolean setAccountRegistration(SipProfile account, int renew, boolean forceReAdd)
-            throws SameThreadException {
+            throws SipService.SameThreadException {
         int status = -1;
         if (!created || account == null) {
             Log.e(THIS_FILE, "PJSIP is not started here, nothing can be done");
@@ -1687,8 +1708,8 @@ public class PjSipService {
      * @param statusText the text of the presence
      * @throws SameThreadException
      */
-    public void setPresence(PresenceStatus presence, String statusText, long accountId)
-            throws SameThreadException {
+    public void setPresence(SipManager.PresenceStatus presence, String statusText, long accountId)
+            throws SipService.SameThreadException {
         if (!created) {
             Log.e(THIS_FILE, "PJSIP is not started here, nothing can be done");
             return;
@@ -1707,8 +1728,8 @@ public class PjSipService {
 
     }
 
-    private int getOnlineForStatus(PresenceStatus presence) {
-        return presence == PresenceStatus.ONLINE ? 1 : 0;
+    private int getOnlineForStatus(SipManager.PresenceStatus presence) {
+        return presence == SipManager.PresenceStatus.ONLINE ? 1 : 0;
     }
 
     public static long getAccountIdForPjsipId(Context ctxt, int pjId) {
@@ -1773,9 +1794,9 @@ public class PjSipService {
     }
 
     public void refreshCallMediaState(final int callId) {
-        service.getExecutor().execute(new SipRunnable() {
+        service.getExecutor().execute(new SipService.SipRunnable() {
             @Override
-            public void doRun() throws SameThreadException {
+            public void doRun() throws SipService.SameThreadException {
                 if (created && userAgentReceiver != null) {
                     userAgentReceiver.updateCallMediaState(callId);
                 }
@@ -1791,7 +1812,7 @@ public class PjSipService {
      * @param accountId the context account
      * @return ToCall object representing what to call and using which account
      */
-    private ToCall sanitizeSipUri(String callee, long accountId) throws SameThreadException {
+    private SipService.ToCall sanitizeSipUri(String callee, long accountId) throws SipService.SameThreadException {
         // accountId is the id in term of csipsimple database
         // pjsipAccountId is the account id in term of pjsip adding
         int pjsipAccountId = (int) SipProfile.INVALID_ID;
@@ -1854,7 +1875,7 @@ public class PjSipService {
         // Check integrity of callee field
         // Get real account information now
         account = service.getAccount((int) finalAccountId);
-        ParsedSipContactInfos finalCallee = account.formatCalleeNumber(callee);
+        SipUri.ParsedSipContactInfos finalCallee = account.formatCalleeNumber(callee);
         String digitsToAdd = null;
         if (!TextUtils.isEmpty(finalCallee.userName) &&
                 (finalCallee.userName.contains(",") || finalCallee.userName.contains(";"))) {
@@ -1876,13 +1897,13 @@ public class PjSipService {
                 pjsipAccountId = pjsua.acc_find_for_outgoing(pjsua.pj_str_copy(finalCallee
                         .toString(false)));
             }
-            return new ToCall(pjsipAccountId, finalCallee.toString(true), digitsToAdd);
+            return new SipService.ToCall(pjsipAccountId, finalCallee.toString(true), digitsToAdd);
         }
 
         return null;
     }
 
-    public void onGSMStateChanged(int state, String incomingNumber) throws SameThreadException {
+    public void onGSMStateChanged(int state, String incomingNumber) throws SipService.SameThreadException {
         // Avoid ringing if new GSM state is not idle
         if (state != TelephonyManager.CALL_STATE_IDLE && mediaManager != null) {
             mediaManager.stopRingAndUnfocus();
@@ -1938,14 +1959,14 @@ public class PjSipService {
      * pjsua.send_keep_alive(acc.getPjsuaId()); } }
      */
 
-    public void zrtpSASVerified(int callId) throws SameThreadException {
+    public void zrtpSASVerified(int callId) throws SipService.SameThreadException {
         if (!created) {
             return;
         }
         pjsua.jzrtp_SASVerified(callId);
     }
 
-    public void zrtpSASRevoke(int callId) throws SameThreadException {
+    public void zrtpSASRevoke(int callId) throws SipService.SameThreadException {
         if (!created) {
             return;
         }
@@ -2039,14 +2060,14 @@ public class PjSipService {
         return pjmedia_srtp_use.PJMEDIA_SRTP_DISABLED;
     }
 
-    public void setNoSnd() throws SameThreadException {
+    public void setNoSnd() throws SipService.SameThreadException {
         if (!created) {
             return;
         }
         pjsua.set_no_snd_dev();
     }
 
-    public void setSnd() throws SameThreadException {
+    public void setSnd() throws SipService.SameThreadException {
         if (!created) {
             return;
         }
@@ -2063,7 +2084,7 @@ public class PjSipService {
      * @throws SameThreadException virtual exception to be sure we are calling
      *             this from correct thread
      */
-    public void startRecording(int callId, int way) throws SameThreadException {
+    public void startRecording(int callId, int way) throws SipService.SameThreadException {
         // Make sure we are in a valid state for recording
         if (!canRecord(callId)) {
             return;
@@ -2097,7 +2118,7 @@ public class PjSipService {
      * @throws SameThreadException virtual exception to be sure we are calling
      *             this from correct thread
      */
-    public void stopRecording(int callId) throws SameThreadException {
+    public void stopRecording(int callId) throws SipService.SameThreadException {
         if (!created) {
             return;
         }
@@ -2149,7 +2170,7 @@ public class PjSipService {
      * @param callId The call id to test for a recorder presence
      * @return true if recording this call
      */
-    public boolean isRecording(int callId) throws SameThreadException {
+    public boolean isRecording(int callId) throws SipService.SameThreadException {
         List<IRecorderHandler> recorders = callRecorders.get(callId, null);
         if (recorders == null) {
             return false;
@@ -2176,7 +2197,7 @@ public class PjSipService {
      * @throws SameThreadException virtual exception to be sure we are calling
      *             this from correct thread
      */
-    public void playWaveFile(String filePath, int callId, int way) throws SameThreadException {
+    public void playWaveFile(String filePath, int callId, int way) throws SipService.SameThreadException {
         if (!created) {
             return;
         }
@@ -2215,7 +2236,7 @@ public class PjSipService {
      * @throws SameThreadException virtual exception to be sure we are calling
      *             this from correct thread
      */
-    public void stopPlaying(int callId) throws SameThreadException {
+    public void stopPlaying(int callId) throws SipService.SameThreadException {
         List<IPlayerHandler> players = callPlayers.get(callId, null);
         if (players != null) {
             for (IPlayerHandler player : players) {
@@ -2225,7 +2246,7 @@ public class PjSipService {
         }
     }
 
-    public void updateTransportIp(String oldIPAddress) throws SameThreadException {
+    public void updateTransportIp(String oldIPAddress) throws SipService.SameThreadException {
         if (!created) {
             return;
         }

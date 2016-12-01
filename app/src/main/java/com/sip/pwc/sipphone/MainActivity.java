@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.sip.pwc.sipphone.api.SipManager;
+import com.csipsimple.api.SipManager;
 
 public class MainActivity extends Activity {
 

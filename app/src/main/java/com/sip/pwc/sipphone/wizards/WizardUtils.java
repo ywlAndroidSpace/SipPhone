@@ -29,8 +29,13 @@ import android.util.Log;
 
 
 import com.sip.pwc.sipphone.R;
+import com.csipsimple.api.SipProfile;
 import com.sip.pwc.sipphone.utils.CustomDistribution;
+import com.sip.pwc.sipphone.wizards.impl.Advanced;
 import com.sip.pwc.sipphone.wizards.impl.Basic;
+import com.sip.pwc.sipphone.wizards.impl.Expert;
+import com.sip.pwc.sipphone.wizards.impl.Local;
+import com.sip.pwc.sipphone.wizards.impl.OnSip;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -222,7 +227,7 @@ public class WizardUtils {
 				return wizard_infos.icon;
 			}
 		}
-		return R.drawable.ic_launcher_phone;
+		return R.mipmap.ic_launcher_phone;
 	}
 	
 

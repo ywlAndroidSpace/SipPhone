@@ -18,7 +18,8 @@ import android.hardware.Camera.PreviewCallback;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 
-import com.csipsimple.utils.Log;
+
+import com.sip.pwc.sipphone.utils.Log;
 
 import org.webrtc.videoengine.VideoCaptureDeviceInfoAndroid.AndroidVideoCaptureDevice;
 import org.webrtc.videoengine.camera.CameraUtilsWrapper;

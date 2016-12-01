@@ -28,9 +28,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.CallLog;
 import android.util.Log;
 
-import com.sip.pwc.sipphone.api.SipManager;
-import com.sip.pwc.sipphone.api.SipMessage;
-import com.sip.pwc.sipphone.api.SipProfile;
+import com.csipsimple.api.SipManager;
+import com.csipsimple.api.SipMessage;
+import com.csipsimple.api.SipProfile;
 import com.sip.pwc.sipphone.models.Filter;
 
 

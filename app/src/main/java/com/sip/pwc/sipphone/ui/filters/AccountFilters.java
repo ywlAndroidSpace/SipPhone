@@ -30,7 +30,7 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.sip.pwc.sipphone.R;
-import com.sip.pwc.sipphone.api.SipProfile;
+import com.csipsimple.api.SipProfile;
 import com.sip.pwc.sipphone.utils.Compatibility;
 import com.sip.pwc.sipphone.wizards.WizardUtils;
 

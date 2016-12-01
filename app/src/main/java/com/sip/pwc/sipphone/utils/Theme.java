@@ -44,8 +44,8 @@ import android.widget.TextView;
 
 
 import com.sip.pwc.sipphone.R;
-import com.sip.pwc.sipphone.api.SipConfigManager;
-import com.sip.pwc.sipphone.api.SipManager;
+import com.csipsimple.api.SipConfigManager;
+import com.csipsimple.api.SipManager;
 
 import java.util.HashMap;
 import java.util.List;

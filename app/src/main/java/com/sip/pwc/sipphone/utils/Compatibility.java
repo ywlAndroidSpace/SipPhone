@@ -43,7 +43,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 
-import com.sip.pwc.sipphone.api.SipConfigManager;
+import com.csipsimple.api.SipConfigManager;
 
 import java.io.File;
 import java.io.FileFilter;

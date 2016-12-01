@@ -26,9 +26,9 @@ import android.util.Log;
 
 
 import com.sip.pwc.sipphone.R;
-import com.sip.pwc.sipphone.api.SipProfile;
-import com.sip.pwc.sipphone.api.SipUri;
-import com.sip.pwc.sipphone.api.SipUri.ParsedSipContactInfos;
+import com.csipsimple.api.SipProfile;
+import com.csipsimple.api.SipUri;
+import com.csipsimple.api.SipUri.ParsedSipContactInfos;
 import java.util.HashMap;
 
 public class Basic extends BaseImplementation {

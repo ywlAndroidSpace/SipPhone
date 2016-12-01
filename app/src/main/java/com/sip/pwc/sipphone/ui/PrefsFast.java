@@ -30,7 +30,7 @@ import android.widget.RadioButton;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.sip.pwc.sipphone.R;
-import com.sip.pwc.sipphone.api.SipConfigManager;
+import com.csipsimple.api.SipConfigManager;
 import com.sip.pwc.sipphone.utils.PreferencesWrapper;
 
 public class PrefsFast extends SherlockActivity implements OnClickListener {
@@ -102,7 +102,7 @@ public class PrefsFast extends SherlockActivity implements OnClickListener {
 		boolean useGsm = useGsmIn || useGsmOut ;
 		boolean lockWifi = SipConfigManager.getPreferenceBooleanValue(this, SipConfigManager.LOCK_WIFI, true);
 		
-		globGsm.setChecked( true );
+		globGsm.setChecked( useGsm );
 		
 		Profile mode = Profile.UNKOWN;
 		
@@ -117,8 +117,6 @@ public class PrefsFast extends SherlockActivity implements OnClickListener {
 		
 		setProfile(mode);
 
-		//将配置保存，不可更改
-		save();
 	}
 
 	private void setProfile(Profile mode) {
