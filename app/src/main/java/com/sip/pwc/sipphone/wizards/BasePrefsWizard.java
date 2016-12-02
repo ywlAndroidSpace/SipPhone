@@ -94,6 +94,7 @@ public class BasePrefsWizard extends GenericPrefs {
 			}
 		});
         wizard.fillLayout(account);
+		saveAndFinish();
 	}
 
 	private boolean isResumed = false;

@@ -85,10 +85,10 @@ public class AccountsEditListFragment extends CSSListFragment implements /*OnQui
 		}
 
 		public void onChange(boolean selfChange) {
-			Log.d(THIS_FILE, "Accounts status.onChange( " + selfChange + ")");
-			((BaseAdapter) getListAdapter()).notifyDataSetChanged();
-		}
-	}
+            Log.d(THIS_FILE, "Accounts status.onChange( " + selfChange + ")");
+            ((BaseAdapter) getListAdapter()).notifyDataSetChanged();
+        }
+    }
 	
 	
 	private final static String CURRENT_CHOICE = "curChoice";
@@ -287,18 +287,18 @@ public class AccountsEditListFragment extends CSSListFragment implements /*OnQui
     }
     
     private void updateCheckedItem() {
-    	if(curCheckPosition != SipProfile.INVALID_ID) {
-	    	for(int i=0; i<getListAdapter().getCount(); i++) {
-	        	long profId = getListAdapter().getItemId(i);
-	        	if(profId == curCheckPosition) {
-	        		getListView().setItemChecked(i, true);
-	        	}
-	        }
-    	}else {
-    		for(int i=0; i<getListAdapter().getCount(); i++) {
-    			getListView().setItemChecked(i, false);
-    		}
-    	}
+        if (curCheckPosition != SipProfile.INVALID_ID) {
+            for (int i = 0; i < getListAdapter().getCount(); i++) {
+                long profId = getListAdapter().getItemId(i);
+                if (profId == curCheckPosition) {
+                    getListView().setItemChecked(i, true);
+                }
+            }
+        } else {
+            for (int i = 0; i < getListAdapter().getCount(); i++) {
+                getListView().setItemChecked(i, false);
+            }
+        }
     }
     
 

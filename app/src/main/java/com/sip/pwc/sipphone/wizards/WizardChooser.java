@@ -84,8 +84,20 @@ public class WizardChooser extends SherlockExpandableListActivity {
 		if(childDatas.size() >= 2) {
 		    getExpandableListView().expandGroup(1);
 		}
+
+		setDefaultSetting();
 	}
-	
+
+	private void setDefaultSetting() {
+		Map<String, Object> data = childDatas.get(0).get(0);
+		String wizard_id = (String) data.get(WizardUtils.ID);
+		Intent result = getIntent();
+		result.putExtra(WizardUtils.ID, wizard_id);
+
+		setResult(RESULT_OK, result);
+		finish();
+	}
+
 	@Override
 	public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 		Map<String, Object> data = childDatas.get(groupPosition).get(childPosition);

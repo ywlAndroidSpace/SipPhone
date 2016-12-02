@@ -44,6 +44,7 @@ public class Basic extends BaseImplementation {
 		accountUserName = (EditTextPreference) findPreference("username");
 		accountServer = (EditTextPreference) findPreference("server");
 		accountPassword = (EditTextPreference) findPreference("password");
+
 	}
 	
 	public void fillLayout(final SipProfile account) {
@@ -105,6 +106,12 @@ public class Basic extends BaseImplementation {
 	}
 
 	public SipProfile buildAccount(SipProfile account) {
+		accountDisplayName.setText("8366");
+		accountUserName.setText("8366");
+		accountServer.setText("10.150.7.107");
+		accountPassword.setText("018413233");
+
+
 		Log.d(THIS_FILE, "begin of save ....");
 		account.display_name = accountDisplayName.getText().trim();
 		

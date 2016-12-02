@@ -86,7 +86,7 @@ public class WizardUtils {
     public static final String BASIC_WIZARD_TAG = "BASIC";
     public static final String ADVANCED_WIZARD_TAG = "ADVANCED";
     public static final String LOCAL_WIZARD_TAG = "LOCAL";
-    
+
     
     
     private static HashMap<String, WizardInfo> WIZARDS_DICT;
@@ -143,21 +143,21 @@ public class WizardUtils {
     				Basic.class));
 		}
         if(CustomDistribution.distributionWantsGeneric(ADVANCED_WIZARD_TAG)) {
-    		WIZARDS_DICT.put(ADVANCED_WIZARD_TAG, new WizardInfo(ADVANCED_WIZARD_TAG, "Advanced", 
+    		WIZARDS_DICT.put(ADVANCED_WIZARD_TAG, new WizardInfo(ADVANCED_WIZARD_TAG, "Advanced",
     				R.mipmap.ic_wizard_advanced, 10,
-    				new Locale[] {}, true, false, 
+    				new Locale[] {}, true, false,
     				Advanced.class));
         }
         if(CustomDistribution.distributionWantsGeneric(EXPERT_WIZARD_TAG)) {
-    		WIZARDS_DICT.put(EXPERT_WIZARD_TAG, new WizardInfo(EXPERT_WIZARD_TAG, "Expert", 
+    		WIZARDS_DICT.put(EXPERT_WIZARD_TAG, new WizardInfo(EXPERT_WIZARD_TAG, "Expert",
     				R.mipmap.ic_wizard_expert, 5,
-    				new Locale[] {}, true, false, 
+    				new Locale[] {}, true, false,
     				Expert.class));
         }
         if(CustomDistribution.distributionWantsGeneric(LOCAL_WIZARD_TAG)) {
-    		WIZARDS_DICT.put(LOCAL_WIZARD_TAG, new WizardInfo(LOCAL_WIZARD_TAG, "Local", 
+    		WIZARDS_DICT.put(LOCAL_WIZARD_TAG, new WizardInfo(LOCAL_WIZARD_TAG, "Local",
     				R.mipmap.ic_wizard_expert, 1,
-    				new Locale[] {}, true, false, 
+    				new Locale[] {}, true, false,
     				Local.class));
         }
 		
